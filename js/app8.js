@@ -6,6 +6,12 @@ const listaCursos = document.querySelector("#lista-cursos")
 
 const btnVaciarCarrito = document.querySelector("#vaciar-carrito")
 
+document.addEventListener("DOMContentLoaded", (e) => {
+  carrito = JSON.parse(localStorage.getItem("carrito")) || []
+  console.log(carrito);
+  pintarHtml()
+})
+
 listaCursos.addEventListener("click", (e) => {
   e.preventDefault()
   if (e.target.classList.contains("agregar-carrito")) {
@@ -32,50 +38,9 @@ listaCursos.addEventListener("click", (e) => {
       carrito.push(nuevoElemento)
     }
 
-    for (let i = 0; i < carrito.length; i++) {
-      const row = document.createElement("tr")
+    localStorage.setItem("carrito", JSON.stringify(carrito))
 
-      const imagenTd = document.createElement("td")
-      const imagen = document.createElement("img")
-      imagen.src = carrito[i].imagen
-      imagen.style.width = "100px"
-      imagenTd.append(imagen)
-      row.append(imagenTd)
-
-      const tituloTd = document.createElement("td")
-      const titulo = document.createElement("p")
-      titulo.textContent = carrito[i].titulo
-      tituloTd.append(titulo)
-      row.append(tituloTd)
-
-      const precioTd = document.createElement("td")
-      const precio = document.createElement("p")
-      precio.textContent = carrito[i].precio
-      precioTd.append(precio)
-      row.append(precioTd)
-
-      const cantidadTd = document.createElement("td")
-      const cantidad = document.createElement("p")
-      cantidad.textContent = carrito[i].cantidad
-      cantidadTd.append(cantidad)
-      row.append(cantidadTd)
-
-      const borrarTd = document.createElement("td")
-      const botonBorrar = document.createElement("button")
-      botonBorrar.textContent = "Borrar"
-      botonBorrar.addEventListener("click", () => {
-        row.remove()
-        if (carrito.length === 1) {
-          carrito = []
-        } else {
-          carrito.splice(i, 1)
-        }
-      })
-      borrarTd.append(botonBorrar)
-      row.append(borrarTd)
-
-      bodyCarrito.append(row)
-    }
+    pintarHtml()
   }
 })
 
@@ -84,4 +49,54 @@ btnVaciarCarrito.addEventListener("click", () => {
     bodyCarrito.childNodes[0].remove()
   }
   carrito = []
+  localStorage.setItem("carrito", [])
 })
+
+function pintarHtml() {
+  for (let i = 0; i < carrito.length; i++) {
+    const row = document.createElement("tr")
+
+    const imagenTd = document.createElement("td")
+    const imagen = document.createElement("img")
+    imagen.src = carrito[i].imagen
+    imagen.style.width = "100px"
+    imagenTd.append(imagen)
+    row.append(imagenTd)
+
+    const tituloTd = document.createElement("td")
+    const titulo = document.createElement("p")
+    titulo.textContent = carrito[i].titulo
+    tituloTd.append(titulo)
+    row.append(tituloTd)
+
+    const precioTd = document.createElement("td")
+    const precio = document.createElement("p")
+    precio.textContent = carrito[i].precio
+    precioTd.append(precio)
+    row.append(precioTd)
+
+    const cantidadTd = document.createElement("td")
+    const cantidad = document.createElement("p")
+    cantidad.textContent = carrito[i].cantidad
+    cantidadTd.append(cantidad)
+    row.append(cantidadTd)
+
+    const borrarTd = document.createElement("td")
+    const botonBorrar = document.createElement("button")
+    botonBorrar.textContent = "Borrar"
+    botonBorrar.addEventListener("click", () => {
+      row.remove()
+      if (carrito.length === 1) {
+        carrito = []
+        localStorage.setItem("carrito", [])
+      } else {
+        carrito.splice(i, 1)
+        localStorage.setItem("carrito", JSON.stringify(carrito))
+      }
+    })
+    borrarTd.append(botonBorrar)
+    row.append(borrarTd)
+
+    bodyCarrito.append(row)
+  }
+}
